@@ -1,6 +1,7 @@
 package com.belyaev.validator;
 
 import com.belyaev.form.EmployeeForm;
+import org.apache.commons.lang3.StringUtils;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -9,8 +10,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * TODO: comment
- *
  * @author Pavel Belyaev
  * @since 27-Nov-17
  */
@@ -32,12 +31,8 @@ public class EmployeeValidator {
         String number = employeeForm.getNumber();
         if (number == null || number.trim().isEmpty()) {
             errors.add("Employee must have a number");
-        } else {
-            try {
-                Integer.parseInt(number);
-            } catch (NumberFormatException e) {
-                errors.add("Invalid number value");
-            }
+        } else if (!StringUtils.isNumeric(number)){
+            errors.add("Invalid number value");
         }
         String email = employeeForm.getEmail();
         if (email == null || email.trim().isEmpty()) {

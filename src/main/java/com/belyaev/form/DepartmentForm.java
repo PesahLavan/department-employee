@@ -3,8 +3,6 @@ package com.belyaev.form;
 import java.io.Serializable;
 
 /**
- * TODO: comment
- *
  * @author Pavel Belyaev
  * @since 27-Nov-17
  */

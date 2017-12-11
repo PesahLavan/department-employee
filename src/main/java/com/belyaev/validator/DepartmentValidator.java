@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TODO: comment
- *
  * @author Pavel Belyaev
  * @since 27-Nov-17
  */

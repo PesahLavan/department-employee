@@ -2,18 +2,19 @@ package com.belyaev.dao.impl;
 
 import com.belyaev.dao.DAO;
 import com.belyaev.dao.exception.DAOException;
+import org.apache.log4j.Logger;
 
 import javax.sql.DataSource;
 import java.sql.*;
 
 /**
- * TODO: comment
- *
  * @author Pavel Belyaev
  * @since 05-Dec-17
  */
 public class BaseDAO implements DAO {
-    private DataSource dataSource;
+
+    private static final Logger log = Logger.getLogger(BaseDAO.class);
+    protected DataSource dataSource;
 
     @Override
     public void setDataSource(DataSource dataSource) {
@@ -21,40 +22,43 @@ public class BaseDAO implements DAO {
     }
 
     @Override
-    public  Connection getConnection() throws DAOException {
-        DataSource dataSource = DataSourceCache.getInstance().getDataSource();
+    public Connection getConnection() throws DAOException {
+        DataSource dataSourceInit = DataSourceCache.getInstance().getDataSource();
         try {
-            return dataSource.getConnection();
+            return dataSourceInit.getConnection();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Error connection DB", e);
             throw new DAOException();
         }
     }
-    protected void closeDBObjects(ResultSet resultSet, Statement statement, Connection connection) {
+    void closeDBObjects(ResultSet resultSet, Statement statement, Connection connection) {
         if (resultSet != null) {
             try {
                 resultSet.close();
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("Error close ResultSet", e);
             }
         }
         if (statement != null) {
             try {
                 statement.close();
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("Error close Statement", e);
             }
         }
         if (connection != null) {
             try {
                 connection.close();
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("Error close Connection", e);
             }
         }
     }
+    public void closeConnection() throws DAOException {
+        closeDBObjects(null, null, getConnection());
+    }
 
-    protected boolean isEntity(String name, String sql, String column) throws DAOException{
+    boolean isEntity(String name, String sql, String column) throws DAOException{
         boolean isName = false;
         Connection connection = null;
         PreparedStatement pStatement = null;

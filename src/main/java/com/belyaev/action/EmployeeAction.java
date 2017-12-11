@@ -4,18 +4,18 @@ import com.belyaev.dao.DAOFactory;
 import com.belyaev.dao.EntityDAO;
 import com.belyaev.dao.exception.DAOException;
 import com.belyaev.model.Employee;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TODO: comment
- *
  * @author Pavel Belyaev
  * @since 28-Nov-17
  */
 public class EmployeeAction implements Action<Employee> {
 
+    private static final Logger log = Logger.getLogger(EmployeeAction.class);
     private EntityDAO<Employee> employeeDAO = DAOFactory.getEmployeeDAO();
     private boolean isWrong;
 
@@ -33,7 +33,7 @@ public class EmployeeAction implements Action<Employee> {
         try {
             employees = employeeDAO.getAll();
         } catch (DAOException e) {
-            e.printStackTrace();
+            log.error("Error reade all employee", e);
         }
         return employees;
     }
@@ -54,8 +54,8 @@ public class EmployeeAction implements Action<Employee> {
         try {
             employeeDAO.insert(employee);
         } catch (DAOException e) {
-            isWrong = isWrong(e.getMessage());
-            if (!isWrong) e.printStackTrace();
+            isWrong = isExist(e.getMessage());
+            if (!isWrong) log.error("Error insert employee", e);
         }
     }
     @Override
@@ -64,8 +64,8 @@ public class EmployeeAction implements Action<Employee> {
         try {
             employeeDAO.update(employee);
         } catch (DAOException e) {
-            isWrong = isWrong(e.getMessage());
-            if (!isWrong) e.printStackTrace();
+            isWrong = isExist(e.getMessage());
+            if (!isWrong) log.error("Error update employee", e);
         }
     }
     @Override
@@ -73,7 +73,7 @@ public class EmployeeAction implements Action<Employee> {
         try {
             employeeDAO.delete(employee);
         } catch (DAOException e) {
-            e.printStackTrace();
+            log.error("Error delete employee", e);
         }
     }
 
@@ -83,17 +83,17 @@ public class EmployeeAction implements Action<Employee> {
         try {
             employee = employeeDAO.get(id);
         } catch (DAOException e) {
-            e.printStackTrace();
+            log.error("Error get employee", e);
         }
         return employee;
     }
 
-    protected boolean isWrong(String msg){
-        boolean isWrong = false;
+    private boolean isExist(String msg){
+        boolean isExist = false;
         String msgEmail = msg.substring(78, 96);
         if (msgEmail.equals("employee_email_key")){
-            isWrong = true;
+            isExist = true;
         }
-        return isWrong;
+        return isExist;
     }
 }

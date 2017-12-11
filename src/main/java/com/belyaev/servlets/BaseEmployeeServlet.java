@@ -1,11 +1,9 @@
 package com.belyaev.servlets;
 
 import com.belyaev.action.DepartmentAction;
-import com.belyaev.action.EmployeeAction;
 import com.belyaev.form.EmployeeForm;
 import com.belyaev.model.Department;
 import com.belyaev.model.Employee;
-import com.belyaev.validator.EmployeeValidator;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -17,24 +15,30 @@ import java.sql.Date;
 import java.util.List;
 
 /**
- * TODO: comment
- *
  * @author Pavel Belyaev
  * @since 01-Dec-17
  */
 public abstract class BaseEmployeeServlet extends HttpServlet {
 
-    private static final long serialVersionUID = 1573L;
+    private final List<Department> departments = new DepartmentAction().getEmpAll();
 
-    EmployeeAction employeeAction = new EmployeeAction();
-    DepartmentAction departmentAction = new DepartmentAction();
 
-    protected void redirect(HttpServletRequest request, HttpServletResponse response,
-                            List<String> errors, EmployeeForm employeeForm)
+    private int getDepartmentId(HttpServletRequest request, EmployeeForm employeeForm){
+        int id;
+        if (employeeForm.getDepartmentId() == null){
+            id = Integer.parseInt(request.getParameter("departmentId"));
+        }else {
+            id = Integer.parseInt(employeeForm.getDepartmentId());
+        }
+        return id;
+    }
+
+    void redirectForm(HttpServletRequest request, HttpServletResponse response,
+                                List<String> errors, EmployeeForm employeeForm)
             throws ServletException, IOException {
-        int departmentId = Integer.parseInt(employeeForm.getDepartmentId());
-        String nameDepartment = departmentAction.get(departmentId).getName();
-        request.setAttribute("departments", departmentAction.getEmpAll());
+        int departmentId = getDepartmentId(request, employeeForm);
+        String nameDepartment = new DepartmentAction().get(departmentId).getName();
+        request.setAttribute("departments", departments);
         request.setAttribute("nameDepartment", nameDepartment);
         request.setAttribute("departmentId", departmentId);
         request.setAttribute("employeeForm", employeeForm);
@@ -42,26 +46,19 @@ public abstract class BaseEmployeeServlet extends HttpServlet {
         RequestDispatcher rd = request.getRequestDispatcher("/view/employee/EmployeeForm.jsp");
         rd.forward(request, response);
     }
-    protected EmployeeForm createEmployeeForm(HttpServletRequest request){
+    EmployeeForm createEmployeeForm(HttpServletRequest request){
         EmployeeForm employeeForm = new EmployeeForm();
         employeeForm.setId(request.getParameter("id"));
         employeeForm.setName(request.getParameter("name"));
-        employeeForm.setDepartmentId(request.getParameter("departmentId"));
+        employeeForm.setDepartmentId(String.valueOf(getDepartmentId(request, new EmployeeForm())));
         employeeForm.setNumber(request.getParameter("number"));
         employeeForm.setEmail(request.getParameter("email"));
         employeeForm.setBirthDate(request.getParameter("birthday"));
-        List<Department> departments = departmentAction.getEmpAll();
         employeeForm.setDepartments(departments);
         return employeeForm;
     }
-    protected List<String> validate(EmployeeForm employeeForm){
-        EmployeeValidator employeeValidator = new EmployeeValidator();
-        List<String> errors = employeeValidator.validate(employeeForm);
-        return errors;
-    }
-    protected Employee createEmployee(EmployeeForm employeeForm){
+    Employee createEmployee(EmployeeForm employeeForm){
         Employee employee = new Employee();
-        /** New Employee for insert DB*/
         if (!employeeForm.getId().isEmpty()) employee.setId(Integer.parseInt(employeeForm.getId()));
         employee.setName(employeeForm.getName());
         employee.setDepartmentId(Integer.parseInt(employeeForm.getDepartmentId()));
@@ -70,7 +67,7 @@ public abstract class BaseEmployeeServlet extends HttpServlet {
         employee.setBirthDate(Date.valueOf(employeeForm.getBirthDate()));
         return employee;
     }
-    protected EmployeeForm createEmployeeForm(Employee employee){
+    EmployeeForm createEmployeeForm(Employee employee){
         EmployeeForm employeeForm = new EmployeeForm();
         employeeForm.setId(String.valueOf(employee.getId()));
         employeeForm.setName(employee.getName());

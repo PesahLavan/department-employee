@@ -1,57 +1,50 @@
 package com.belyaev.filter;
 
 
+import com.belyaev.dao.exception.DAOException;
+import com.belyaev.dao.impl.BaseDAO;
 import org.apache.log4j.Logger;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 import javax.sql.DataSource;
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 
 /**
- * TODO: comment
- *
  * @author Pavel Belyaev
  * @since 05-Dec-17
  */
 @WebListener
 public class JdbcDriverListener implements ServletContextListener {
+    private static final Logger log = Logger.getLogger(JdbcDriverListener.class);
 
-    private Driver driver;
-    private DriverManager driverManager;
-    private Logger logger;
-    private DataSource dataSource;
 
     @Override
-    public void contextInitialized(ServletContextEvent sce) {
-
+    public void contextInitialized(ServletContextEvent sce){
+        try {
+            Context envCtx = (Context) new InitialContext().lookup("java:comp/env");
+            DataSource  ds = (DataSource) envCtx.lookup("jdbc/postgres");
+            sce.getServletContext().setAttribute("DBCPool", ds);
+        } catch(NamingException e){
+            log.info("Could not register driver:".concat(e.getMessage()));
+        }
     }
-
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
-        Context initContext = null;
-        Context envContext  = null;
+        ServletContext ctx = sce.getServletContext();
+        BaseDAO dbManager = (BaseDAO) ctx.getAttribute("DBCPool");
         try {
-            initContext = new InitialContext();
-            envContext = (Context)initContext.lookup("java:/comp/env");
-            dataSource = (DataSource)envContext.lookup("jdbc/postgres");
-        } catch (NamingException e) {
-            e.printStackTrace();
+            dbManager.closeConnection();
+        } catch (DAOException e) {
+            log.info("deregister driver.".concat(e.getMessage()));
         }
 
-        try {
-            driver = driverManager.getDriver("jdbc:postgresql://localhost:5432/test1");
-            driverManager.deregisterDriver(driver);
-        } catch (SQLException ex) {
-            logger.info("Could not deregister driver:".concat(ex.getMessage()));
-        }
-        dataSource = null;
     }
+
+
 
 }

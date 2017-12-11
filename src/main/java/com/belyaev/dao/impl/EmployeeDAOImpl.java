@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TODO: comment
- *
  * @author Pavel Belyaev
  * @since 05-Dec-17
  */

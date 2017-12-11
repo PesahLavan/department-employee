@@ -3,8 +3,6 @@ package com.belyaev.model;
 import java.io.Serializable;
 
 /**
- * TODO: comment
- *
  * @author Pavel Belyaev
  * @since 26-Oct-17
  */
@@ -32,15 +30,11 @@ public class Department implements Serializable {
     }
 
     @Override
-    public boolean equals(Object object) {
-        if (!(object instanceof Department)) {
-            return false;
-        }
-        Department other = (Department) object;
-        if ((this.id == 0 && other.id != 0) || (this.id != 0 && !(this.id == other.id))) {
-            return false;
-        }
-        return true;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Department)) return false;
+        Department that = (Department) o;
+        return getId() == that.getId();
     }
 
     @Override

@@ -6,8 +6,6 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 
 /**
- * TODO: comment
- *
  * @author Pavel Belyaev
  * @since 05-Dec-17
  */

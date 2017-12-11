@@ -1,5 +1,7 @@
 package com.belyaev.dao.impl;
 
+import org.apache.log4j.Logger;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -7,12 +9,11 @@ import javax.sql.DataSource;
 
 
 /**
- * TODO: comment
- *
  * @author Pavel Belyaev
  * @since 05-Dec-17
  */
 public class DataSourceCache {
+    private static final Logger log = Logger.getLogger(DataSourceCache.class);
     private static DataSourceCache instance;
     private DataSource dataSource;
     static {
@@ -20,13 +21,13 @@ public class DataSourceCache {
     }
 
     private DataSourceCache() {
-        Context context = null;
+        Context context;
         try {
             context = new InitialContext();
             dataSource = (DataSource) context.lookup(
                     "java:comp/env/jdbc/postgres");
         } catch (NamingException e) {
-            e.printStackTrace();
+            log.error("Error reade context", e);
         }
     }
 

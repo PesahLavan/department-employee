@@ -1,12 +1,12 @@
 package com.belyaev.filter;
 
+import org.apache.log4j.Logger;
+
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import java.io.IOException;
 
 /**
- * TODO: comment
- *
  * @author Pavel Belyaev
  * @since 08-Nov-17
  */
@@ -14,10 +14,14 @@ import java.io.IOException;
 @WebFilter(filterName = "DispatcherFilter", urlPatterns = { "/*" })
 public class CharacterSetFilter implements Filter {
 
+    private static final Logger log = Logger.getLogger(CharacterSetFilter.class);
+
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig){
+        log.info("Init CharacterSetFilter");
     }
 
+    @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         request.setCharacterEncoding("UTF-8");
@@ -28,6 +32,6 @@ public class CharacterSetFilter implements Filter {
 
     @Override
     public void destroy() {
-
+        log.info("Destroy CharacterSetFilter");
     }
 }

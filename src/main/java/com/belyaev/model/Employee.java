@@ -5,8 +5,6 @@ import java.io.Serializable;
 import java.sql.Date;
 
 /**
- * TODO: comment
- *
  * @author Pavel Belyaev
  * @since 26-Oct-17
  */
@@ -70,17 +68,12 @@ public class Employee implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || !Employee.class.isAssignableFrom(o.getClass())) {
-            return false;
-        }
-
-        Employee emp = (Employee) o;
-
-        return id == emp.id;
+        if (this == o) return true;
+        if (!(o instanceof Employee)) return false;
+        Employee employee = (Employee) o;
+        return getId() == employee.getId();
     }
+
     @Override
     public int hashCode() {
         return (int) (id ^ (id >>> 32));

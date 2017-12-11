@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TODO: comment
- *
  * @author Pavel Belyaev
  * @since 05-Dec-17
  */
@@ -28,10 +26,7 @@ public class DepartmentDAOImpl extends BaseDAO implements EntityDAO<Department> 
             pStatement = connection.prepareStatement(GET_ALL_DEPARTMENT_SQL);
             resultSet = pStatement.executeQuery();
             while (resultSet.next()) {
-                Department department = new Department();
-                department.setId(resultSet.getInt("uid"));
-                department.setName(resultSet.getString("department"));
-                departments.add(department);
+                departments.add(getDepartment(resultSet));
             }
         } catch (SQLException e) {
             throw new DAOException("Error getting departments. " + e.getMessage());
@@ -106,8 +101,7 @@ public class DepartmentDAOImpl extends BaseDAO implements EntityDAO<Department> 
             pStatement.setInt(1, id);
             resultSet = pStatement.executeQuery();
             while (resultSet.next()) {
-                department.setId(resultSet.getInt("uid"));
-                department.setName(resultSet.getString("department"));
+                department = getDepartment(resultSet);
             }
         } catch (SQLException e) {
             throw new DAOException("Error getting department. " + e.getMessage());
@@ -121,5 +115,11 @@ public class DepartmentDAOImpl extends BaseDAO implements EntityDAO<Department> 
     @Override
     public boolean isName(String name) throws DAOException {
         return isEntity(name, IS_DEPARTMENT_SQL, "department");
+    }
+    private Department getDepartment(ResultSet resultSet) throws SQLException {
+        Department department = new Department();
+        department.setId(resultSet.getInt("uid"));
+        department.setName(resultSet.getString("department"));
+        return department;
     }
 }

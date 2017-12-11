@@ -4,17 +4,17 @@ import com.belyaev.dao.DAOFactory;
 import com.belyaev.dao.EntityDAO;
 import com.belyaev.dao.exception.DAOException;
 import com.belyaev.model.Department;
+import org.apache.log4j.Logger;
 
 import java.util.List;
 
 /**
- * TODO: comment
- *
  * @author Pavel Belyaev
  * @since 28-Nov-17
  */
 public class DepartmentAction implements Action<Department>{
 
+    private static final Logger log = Logger.getLogger(DepartmentAction.class);
     private EntityDAO<Department> departmentDAO = DAOFactory.getDepartmentDAO();
     private boolean isWrong;
 
@@ -31,7 +31,7 @@ public class DepartmentAction implements Action<Department>{
         try {
             departments = departmentDAO.getAll();
         } catch (DAOException e) {
-            e.printStackTrace();
+            log.error("Error reade all department", e);
         }
         return departments;
     }
@@ -39,7 +39,7 @@ public class DepartmentAction implements Action<Department>{
         try {
             departmentDAO.delete(department);
         } catch (DAOException e) {
-            e.printStackTrace();
+            log.error("Error delete department", e);
         }
     }
     public void insert(Department department) {
@@ -47,8 +47,8 @@ public class DepartmentAction implements Action<Department>{
             isWrong = false;
             departmentDAO.insert(department);
         } catch (DAOException e) {
-            isWrong = isWrong(e.getMessage());
-            if (!isWrong) e.printStackTrace();
+            isWrong = isExist(e.getMessage());
+            if (!isWrong) log.error("Error insert department", e);
         }
     }
     public Department get(Integer id) {
@@ -56,7 +56,7 @@ public class DepartmentAction implements Action<Department>{
         try {
             department = departmentDAO.get(id);
         } catch (DAOException e) {
-            e.printStackTrace();
+            log.error("Error get department", e);
         }
         return department;
     }
@@ -65,17 +65,17 @@ public class DepartmentAction implements Action<Department>{
             isWrong = false;
             departmentDAO.update(department);
         } catch (DAOException e) {
-            isWrong = isWrong(e.getMessage());
-            if (!isWrong) e.printStackTrace();
+            isWrong = isExist(e.getMessage());
+            if (!isWrong) log.error("Error update department", e);
         }
     }
 
-    protected boolean isWrong(String msg){
-        boolean isWrong = false;
+    private boolean isExist(String msg){
+        boolean isExist = false;
         String msgDep = msg.substring(80, 106);
         if (msgDep.equals("departments_department_key")){
-            isWrong = true;
+            isExist = true;
         }
-        return isWrong;
+        return isExist;
     }
 }

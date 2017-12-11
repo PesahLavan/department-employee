@@ -1,33 +1,24 @@
 package com.belyaev.dao.exception;
 
 /**
- * TODO: comment
- *
  * @author Pavel Belyaev
  * @since 27-Nov-17
  */
 public class DAOException extends Exception {
 
-    private static final long serialVersionUID = 19192L;
-    private String message;
-
     public DAOException() {
+        super();
     }
 
     public DAOException(String message) {
-        this.message = message;
+        super(message);
     }
 
-    public String getMessage() {
-        return message;
+    public DAOException(String message, Throwable cause) {
+        super(message, cause);
     }
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public String toString() {
-        return message;
+    public DAOException(Throwable cause) {
+        super(cause);
     }
 }
-
