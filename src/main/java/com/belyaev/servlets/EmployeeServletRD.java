@@ -25,29 +25,7 @@ import java.util.List;
 public class EmployeeServletRD extends BaseEmployeeServlet {
     private static final Logger log = Logger.getLogger(EmployeeServletRD.class);
 
-    @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response){
-        try {
-            process(request, response);
-        } catch (IOException e) {
-            log.error("IO error doGet process", e);
-        } catch (ServletException e) {
-            log.error("Servlet error doGet process", e);
-        }
-    }
-
-    @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response){
-        try {
-            process(request, response);
-        } catch (IOException e) {
-            log.error("IO error doPost process", e);
-        } catch (ServletException e) {
-            log.error("Servlet error doPost process", e);
-        }
-    }
-
-    private void process(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    protected void process(HttpServletRequest request, HttpServletResponse response){
         DepartmentAction departmentAction = new DepartmentAction();
         EmployeeAction employeeAction = new EmployeeAction();
         String uri = request.getRequestURI();
@@ -80,7 +58,13 @@ public class EmployeeServletRD extends BaseEmployeeServlet {
         }
         if (dispatchUrl != null) {
             RequestDispatcher rd = request.getRequestDispatcher(dispatchUrl);
-            rd.forward(request, response);
+            try {
+                rd.forward(request, response);
+            } catch (ServletException e) {
+                log.error("Servlet error redirect", e);
+            } catch (IOException e) {
+                log.error("IO error redirect", e);
+            }
         }
     }
     private String departmentName(int departmentId){

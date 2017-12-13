@@ -4,6 +4,7 @@ import com.belyaev.action.DepartmentAction;
 import com.belyaev.form.EmployeeForm;
 import com.belyaev.model.Department;
 import com.belyaev.model.Employee;
+import org.apache.log4j.Logger;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -19,9 +20,21 @@ import java.util.List;
  * @since 01-Dec-17
  */
 public abstract class BaseEmployeeServlet extends HttpServlet {
-
+    private static final Logger log = Logger.getLogger(BaseEmployeeServlet.class);
     private final List<Department> departments = new DepartmentAction().getEmpAll();
 
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response){
+            process(request, response);
+    }
+
+
+
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response){
+            process(request, response);
+    }
+    protected abstract void process(HttpServletRequest request, HttpServletResponse response);
 
     private int getDepartmentId(HttpServletRequest request, EmployeeForm employeeForm){
         int id;
@@ -34,8 +47,7 @@ public abstract class BaseEmployeeServlet extends HttpServlet {
     }
 
     void redirectForm(HttpServletRequest request, HttpServletResponse response,
-                                List<String> errors, EmployeeForm employeeForm)
-            throws ServletException, IOException {
+                                List<String> errors, EmployeeForm employeeForm){
         int departmentId = getDepartmentId(request, employeeForm);
         String nameDepartment = new DepartmentAction().get(departmentId).getName();
         request.setAttribute("departments", departments);
@@ -44,7 +56,13 @@ public abstract class BaseEmployeeServlet extends HttpServlet {
         request.setAttribute("employeeForm", employeeForm);
         request.setAttribute("errors", errors);
         RequestDispatcher rd = request.getRequestDispatcher("/view/employee/EmployeeForm.jsp");
-        rd.forward(request, response);
+        try {
+            rd.forward(request, response);
+        } catch (ServletException e) {
+            log.error("Servlet error redirect EmployeeForm.jsp", e);
+        } catch (IOException e) {
+            log.error("IO error redirect EmployeeForm.jsp", e);
+        }
     }
     EmployeeForm createEmployeeForm(HttpServletRequest request){
         EmployeeForm employeeForm = new EmployeeForm();

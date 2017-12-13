@@ -22,30 +22,9 @@ import java.util.List;
         urlPatterns = {"/department_create", "/department_update"})
 public class DepartmentServletCU extends BaseDepartmentServlet {
     private static final Logger log = Logger.getLogger(DepartmentServletCU.class);
+    private final DepartmentAction departmentAction = new DepartmentAction();
 
-    @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response)  {
-        try {
-            process(request, response);
-        } catch (IOException e) {
-            log.error("IO error doGet process", e);
-        } catch (ServletException e) {
-            log.error("Servlet error doGet process", e);
-        }
-    }
-
-    @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response) {
-        try {
-            process(request, response);
-        } catch (IOException e) {
-            log.error("IO error doPost process", e);
-        } catch (ServletException e) {
-            log.error("Servlet error doPost process", e);
-        }
-    }
-    private void process(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        DepartmentAction departmentAction = new DepartmentAction();
+     protected void process(HttpServletRequest request, HttpServletResponse response) {
         DepartmentValidator departmentValidator = new DepartmentValidator();
         String uri = request.getRequestURI();
         int lastIndex = uri.lastIndexOf('/');
@@ -54,11 +33,7 @@ public class DepartmentServletCU extends BaseDepartmentServlet {
         List<String> errors = departmentValidator.validate(departmentForm);
         if (errors.isEmpty()){
             Department department = createDepartment(departmentForm);
-            if(action.equals("department_create")){
-                departmentAction.insert(department);
-            } else if (action.equals("department_update")){
-                departmentAction.update(department);
-            }
+            doing(department, action);
             if (departmentAction.isWrong()){
                 errors.add(department.getName() + " is exist");
                 if (action.equals("department_create")){
@@ -67,12 +42,24 @@ public class DepartmentServletCU extends BaseDepartmentServlet {
                 redirect(request, response, errors, departmentForm);
             } else {
                 RequestDispatcher rd = request.getRequestDispatcher("/department_read");
-                rd.forward(request, response);
+                try {
+                    rd.forward(request, response);
+                } catch (ServletException e) {
+                    log.error("Servlet error redirect /department_read", e);
+                } catch (IOException e) {
+                    log.error("IO error redirect /department_read", e);
+                }
             }
         } else {
             redirect(request, response, errors, departmentForm);
-
         }
+    }
+    private void doing(Department department, String action){
+         if ("department_create".equals(action)){
+             departmentAction.insert(department);
+         } else if ("department_update".equals(action)){
+             departmentAction.update(department);
+         }
     }
 }
 

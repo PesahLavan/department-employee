@@ -22,30 +22,9 @@ import java.util.List;
         urlPatterns = {"/employee_create", "/employee_update"})
 public class EmployeeServletCU extends BaseEmployeeServlet {
     private static final Logger log = Logger.getLogger(EmployeeServletCU.class);
+    private final EmployeeAction employeeAction = new EmployeeAction();
 
-    @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response){
-        try {
-            process(request, response);
-        } catch (IOException e) {
-            log.error("IO error doGet process", e);
-        } catch (ServletException e) {
-            log.error("Servlet error doGet process", e);
-        }
-    }
-
-    @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response){
-        try {
-            process(request, response);
-        } catch (IOException e) {
-            log.error("IO error doPost process", e);
-        } catch (ServletException e) {
-            log.error("Servlet error doPost process", e);
-        }
-    }
-    private void process(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        EmployeeAction employeeAction = new EmployeeAction();
+    protected void process(HttpServletRequest request, HttpServletResponse response){
         String uri = request.getRequestURI();
         int lastIndex = uri.lastIndexOf('/');
         String action = uri.substring(lastIndex + 1);
@@ -53,11 +32,7 @@ public class EmployeeServletCU extends BaseEmployeeServlet {
         List<String> errors = new EmployeeValidator().validate(employeeForm);
         if (errors.isEmpty()){
             Employee employee = createEmployee(employeeForm);
-            if(action.equals("employee_create")){
-                employeeAction.insert(employee);
-            } else if (action.equals("employee_update")){
-                employeeAction.update(employee);
-            }
+            doing(employee, action);
             if (employeeAction.isWrong()){
                 errors.add("Email : " + employee.getEmail() + " is exist");
                 if (action.equals("employee_create")){
@@ -66,10 +41,23 @@ public class EmployeeServletCU extends BaseEmployeeServlet {
                 redirectForm(request, response, errors, employeeForm);
             } else {
                 RequestDispatcher rd = request.getRequestDispatcher("/employee_read");
-                rd.forward(request, response);
+                try {
+                    rd.forward(request, response);
+                } catch (ServletException e) {
+                    log.error("Servlet error redirect /employee_read", e);
+                } catch (IOException e) {
+                    log.error("IO error redirect /employee_read", e);
+                }
             }
         } else {
             redirectForm(request, response, errors, employeeForm);
+        }
+    }
+    private void doing(Employee employee, String action){
+        if ("employee_create".equals(action)){
+            employeeAction.insert(employee);
+        } else if ("employee_update".equals(action)){
+            employeeAction.update(employee);
         }
     }
 }

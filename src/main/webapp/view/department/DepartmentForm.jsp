@@ -1,64 +1,61 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
-	<title>Department and Employee Application</title>
+    <title>Department and Employee Application</title>
+    <link rel="shortcut icon" type="image/png" href="${pageContext.request.contextPath}/image/icon.png" />
+    <style type="text/css"><%@include file="/css/main.css"%></style>
 </head>
 <body>
-	<center>
-		<h1>Department Management</h1>
-        <h2>
-			<a href="department_read">List All Department</a>
-        </h2>
-	</center>
-    <div align="center">
-        <c:if test="${requestScope.errors != null}">
-            <p id="errors" style="color: red">
-                     Error(s)!
-                <table align="center">
-                    <c:forEach var="error" items="${requestScope.errors}">
-                        <tr>
-                            <td style="color: red">${error}</td>
-                        </tr>
-                    </c:forEach>
-                </table>
-            </p>
-        </c:if>
-        <c:choose>
-            <c:when test="${not empty departmentForm.id}">
-                <form action="department_update" method="post">
+<h1 style="text-align: center">Department Management</h1>
+<h2 style="text-align: center">
+    <a href="department_read">List All Department</a>
+</h2>
+<div>
+    <c:if test="${requestScope.errors != null}">
+        <p class="errors">Error(s)!</p>
+        <table class="margin">
+            <c:forEach var="error" items="${requestScope.errors}">
+                <tr>
+                    <td class="color-error">${error}</td>
+                </tr>
+            </c:forEach>
+        </table>
+    </c:if>
+    <c:choose>
+    <c:when test="${not empty departmentForm.id}">
+    <form action="department_update" method="post">
+        </c:when>
+        <c:when test="${empty departmentForm.id}">
+        <form action="department_create" method="post">
             </c:when>
-            <c:when test="${empty departmentForm.id}">
-                <form action="department_create" method="post">
-            </c:when>
-        </c:choose>
-        <table border="1" cellpadding="5">
-            <caption>
-            	<h2>
+            </c:choose>
+            <table class="centre">
+                <caption>
                     <c:choose>
                         <c:when test="${not empty departmentForm.id}">
-                            Edit Department
+                            <h2>Edit Department</h2>
                         </c:when>
                         <c:when test="${empty departmentForm.id}">
-                            Add New Department
+                            <h2>Add New Department</h2>
                         </c:when>
                     </c:choose>
-            	</h2>
-            </caption>
-                <input type="hidden" name="id" value="<c:out value='${departmentForm.id}' />" />
-            <tr>
-                <th>Name: </th>
-                <td>
-                    <input type="text" name="name" size="45" value="<c:out value='${departmentForm.name}' />"/>
-				</td>
-            </tr>
-            <tr>
-            	<td colspan="2" align="center">
-            		<input type="submit" value="Save" />
-            	</td>
-            </tr>
-        </table>
+                </caption>
+                <input type="hidden" name="id" value="${departmentForm.id}" />
+                <tr>
+                    <th class="border">Name: </th>
+                    <td class="border">
+                        <input type="text" name="name" size="45" value="${departmentForm.name}"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td  colspan="2" style="text-align: center">
+                        <input type="submit" value="Save" />
+                    </td>
+                </tr>
+            </table>
         </form>
-    </div>	
+</div>
 </body>
 </html>

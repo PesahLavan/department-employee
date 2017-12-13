@@ -2,6 +2,7 @@ package com.belyaev.servlets;
 
 import com.belyaev.form.DepartmentForm;
 import com.belyaev.model.Department;
+import org.apache.log4j.Logger;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -16,14 +17,31 @@ import java.util.List;
  * @since 01-Dec-17
  */
 public abstract class BaseDepartmentServlet extends HttpServlet {
+    private static final Logger log = Logger.getLogger(BaseDepartmentServlet.class);
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response)  {
+            process(request, response);
+    }
+
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response) {
+            process(request, response);
+    }
+
+    protected abstract void process(HttpServletRequest request, HttpServletResponse response);
 
     void redirect(HttpServletRequest request, HttpServletResponse response,
-                            List<String> errors, DepartmentForm departmentForm)
-            throws ServletException, IOException {
+                            List<String> errors, DepartmentForm departmentForm){
         request.setAttribute("errors", errors);
         request.setAttribute("departmentForm", departmentForm);
         RequestDispatcher rd = request.getRequestDispatcher("/view/department/DepartmentForm.jsp");
-        rd.forward(request, response);
+        try {
+            rd.forward(request, response);
+        } catch (ServletException e) {
+            log.error("Servlet error redirect DepartmentForm.jsp", e);
+        } catch (IOException e) {
+            log.error("IO error redirect DepartmentForm.jsp", e);
+        }
     }
 
     DepartmentForm createDepartmentForm(HttpServletRequest request){

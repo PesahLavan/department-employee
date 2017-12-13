@@ -1,0 +1,30 @@
+table.centre{
+    margin: auto;
+    border: 1px solid black
+}
+table.margin{
+    margin: auto;
+}
+th.border {
+    padding: 5px;
+    border: 1px solid black
+}
+td.border {
+    padding: 5px;
+    border: 1px solid black
+}
+.centre{
+    margin: auto;
+}
+p.errors {
+    text-align: center;
+    color: red;
+}
+.color-error{
+    color: red;
+}
+.h2-tag {
+    font-size: x-large;
+    font-weight: bold;
+    padding: 20px;
+}
