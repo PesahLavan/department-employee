@@ -45,7 +45,9 @@
                 <tr>
                     <th  class="border">Name: </th>
                     <td class="border">
-                        <input type="text" name="name" size="45" value="${employeeForm.name}" />
+                        <label>
+                            <input type="text" name="name" size="45" value="${employeeForm.name}"/>
+                        </label>
                     </td>
                 </tr>
                 <tr>
@@ -69,7 +71,6 @@
                     <th class="border">Email : </th>
                     <td class="border">
                         <input type="text" name="email" size="45" value="${employeeForm.email}"	/>
-
                     </td>
                 </tr>
                 <tr>

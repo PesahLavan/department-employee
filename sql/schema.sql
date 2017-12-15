@@ -31,7 +31,7 @@ INSERT INTO departments  DEFAULT VALUES ;
 create table employee (
   uid serial primary key,
   name varchar(64),
-  department_id int not null DEFAULT 0 references departments(uid) ON DELETE SET DEFAULT,
+  department_id int not null DEFAULT 1 references departments(uid) ON DELETE SET DEFAULT,
   number integer,
   email email not null unique,
   birthday date

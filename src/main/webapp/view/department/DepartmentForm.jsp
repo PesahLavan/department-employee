@@ -46,7 +46,9 @@
                 <tr>
                     <th class="border">Name: </th>
                     <td class="border">
-                        <input type="text" name="name" size="45" value="${departmentForm.name}"/>
+                        <label>
+                            <input type="text" name="name" size="45" value="${departmentForm.name}"/>
+                        </label>
                     </td>
                 </tr>
                 <tr>
