@@ -19,10 +19,6 @@ public class EmployeeAction implements Action<Employee> {
     private EntityDAO<Employee> employeeDAO = DAOFactory.getEmployeeDAO();
     private boolean isWrong;
 
-    public void setProductDAO(EntityDAO<Employee> employeeDAO) {
-        this.employeeDAO = employeeDAO;
-    }
-
     public boolean isWrong() {
         return isWrong;
     }

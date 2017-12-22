@@ -2,7 +2,7 @@ package com.belyaev.dao;
 
 import com.belyaev.dao.exception.DAOException;
 
-import javax.sql.DataSource;
+
 import java.util.List;
 
 /**
@@ -21,6 +21,4 @@ public interface EntityDAO<T>{
     T get(final int id) throws DAOException;
 
     boolean isName(String name) throws DAOException;
-
-    void setDataSource(DataSource dataSource);
 }

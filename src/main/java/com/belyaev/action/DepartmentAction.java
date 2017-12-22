@@ -18,10 +18,6 @@ public class DepartmentAction implements Action<Department>{
     private EntityDAO<Department> departmentDAO = DAOFactory.getDepartmentDAO();
     private boolean isWrong;
 
-    public void setProductDAO(EntityDAO<Department> departmentDAO) {
-        this.departmentDAO = departmentDAO;
-    }
-
     public boolean isWrong() {
         return isWrong;
     }
